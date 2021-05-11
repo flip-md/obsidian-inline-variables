@@ -15,7 +15,7 @@ beforeEach(() => {
           startString: "{",
           endString: "}",
           valueEncapsulationString: '"',
-          separatorDefinition: "::",
+          separatorDefinition: ":",
           separatorPlaceholder: ":",
         };
       },
@@ -60,6 +60,7 @@ function makeEditor(text: string[], cursor: Cursor) {
       cursor.line = newCursor.line;
     },
     refresh: () => {},
+    getValue: () => lineArray.map((element) => element.text).join("\n"),
   };
 
   return editor;
@@ -161,17 +162,26 @@ it("Detect deletion", () => {
 
   let editorUtil = new EditorUtils();
 
+  editorUtil.keyValue.set("a", "test");
   editorUtil.updatePlaceholder = mockUpdatePlaceholder;
   editorUtil.expandPlaceholder = mockExpandPlaceholder;
-  let editor = makeEditor(['{a::"test"', '{a:"test"}'], { line: 0, ch: 11 });
+  let editor = makeEditor(['{a:"test"', '{a:"test"}'], { line: 0, ch: 11 });
   editorUtil.detectDeletion(
     editor as any,
     { text: [""], removed: ["}"], from: { line: 0, ch: 10 } } as any
   );
 
-  expect(mockUpdatePlaceholder.mock.calls.length).toBe(1);
-  expect(mockUpdatePlaceholder.mock.calls[0][1].length).toEqual(1);
-  expect(mockUpdatePlaceholder.mock.calls[0][1][0].searchFor.key).toEqual("a");
+  expect(mockUpdatePlaceholder.mock.calls.length).toBe(0);
+  expect(editorUtil.keyValue.get("a")).toEqual("test");
+
+  editor = makeEditor(['{a:"test"', '{a:"test"x'], { line: 0, ch: 11 });
+  editorUtil.detectDeletion(
+    editor as any,
+    { text: [""], removed: ["}"], from: { line: 0, ch: 10 } } as any
+  );
+
+  expect(mockUpdatePlaceholder.mock.calls.length).toBe(0);
+  expect(editorUtil.keyValue.get("a")).toBeNull;
 });
 
 it("Detect keywords", () => {
@@ -182,10 +192,10 @@ it("Detect keywords", () => {
 
   editorUtil.updatePlaceholder = mockUpdatePlaceholder;
   editorUtil.expandPlaceholder = mockExpandPlaceholder;
-  let editor = makeEditor(['{a::"test"}', "b"], { line: 0, ch: 11 });
+  let editor = makeEditor(['{a:"test"}', "b"], { line: 0, ch: 11 });
   editorUtil.detectKeywords(
     editor as any,
-    { text: ['{a::"test"}', "b"], from: { line: 0 } } as any
+    { text: ['{a:"test"}', "b"], from: { line: 0 } } as any
   );
 
   expect(mockUpdatePlaceholder.mock.calls.length).toBe(2);
@@ -199,10 +209,10 @@ it("Detect keywords", () => {
 
   mockUpdatePlaceholder.mockClear();
   mockExpandPlaceholder.mockClear();
-  editor = makeEditor(['{a::"test"}', "{a}"], { line: 0, ch: 11 });
+  editor = makeEditor(['{a:"test"}', "{a}"], { line: 0, ch: 11 });
   editorUtil.detectKeywords(
     editor as any,
-    { text: ['{a::"test"}', "{a}"], from: { line: 0 } } as any
+    { text: ['{a:"test"}', "{a}"], from: { line: 0 } } as any
   );
 
   expect(mockUpdatePlaceholder.mock.calls.length).toBe(2);
@@ -216,11 +226,11 @@ it("Detect keywords", () => {
 });
 
 it("Render", async () => {
-  let html = { innerHTML: '<div>hello {key::"value"}</div>' };
+  let html = { innerHTML: '<div>hello {key:"value"}</div>' };
   await render(html as any);
   expect(html.innerHTML).toEqual("<div>hello value</div>");
 
-  html.innerHTML = '<div>hello {key::"definition"}{key:"placeholder"}</div>';
+  html.innerHTML = '<div>hello {key:"definition"}{key2:"placeholder"}</div>';
   await render(html as any);
   expect(html.innerHTML).toEqual("<div>hello definitionplaceholder</div>");
 });
