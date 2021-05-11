@@ -6,22 +6,17 @@ This is a plugin for [Obsidian](https://obsidian.md) that allows the setting, re
 
 Obsidian Inline Variables follows a simple concept:
 
-- variables are set via `Definitions`, which by default look like `{key::"value"}`, but the enclosing characters can be modified in the settings. On preview and export, `{key::"value"}` would be just displayed as `value`
+- variables are set via `Definitions`, which by default look like `{key:"value"}`, but the enclosing characters can be modified in the settings. On preview and export, `{key:"value"}` would be just displayed as `value`
 - variables are referred to via `Placeholders`. Just type `{key}`, which the plugin will automatically expand to `{key:"value"}` (enclosing characters can be modified), and on preview and export would be rendered as `value`.
 
-Obsidian Inline Variables works with other plugins, such as Templater.
-
-## Known limitations
-
-To be fixed before adding Obsidian Inline Variables to the community plugins list
-
-- [ ] Prevent setting more than one Definition for the same key
+- variables can be used almost everywhere, including document links (at least in preview).
+  Obsidian Inline Variables works with other plugins, such as Templater.
 
 ## Future plans
 
 - [ ] Set and read variables from frontmatter
 - [ ] Autosuggest placeholders
-- [ ] Multiline support (lists
+- [ ] Multiline support (lists)
 
 ## Manual Installation
 

@@ -7,32 +7,25 @@ import Placeholder from "./variables/placeholder";
 
 const INTERFACE_STRINGS = [
   {
-    key: "startString",
+    keys: ["startString"],
     name: "Start String",
     desc: "Marks the start of a variable, cannot be empty",
   },
   {
-    key: "endString",
+    keys: ["endString"],
     name: "End String",
     desc: "Marks the end of a variable, cannot be empty",
   },
   {
-    key: "valueEncapsulationString",
+    keys: ["valueEncapsulationString"],
     name: "Value encapsulation",
     desc: "Encapsulates the value a variable should hold, can be empty",
   },
-  {
-    key: "separatorDefinition",
-    name: "Separator between key and value in a definition",
-    desc:
-      "Separates key and value when defining a variable, cannot be empty or the same as placeholder separator",
-  },
 
   {
-    key: "separatorPlaceholder",
-    name: "Separator between key and value in a placeholder",
-    desc:
-      "Separates key and value when defining a placeholder, cannot be empty or the same as definition separator",
+    keys: ["separatorPlaceholder", "separatorDefinition"],
+    name: "Separator between key and value",
+    desc: "Separates key and value",
   },
 ];
 
@@ -60,9 +53,11 @@ export default class ConfigUI extends PluginSettingTab {
         .setDesc(interfaceString.desc)
         .addText((text) =>
           text
-            .setValue(this.config.getSettings()[interfaceString.key])
+            .setValue(this.config.getSettings()[interfaceString.keys[0]])
             .onChange(async (value) => {
-              this.config.getSettings()[interfaceString.key] = value;
+              interfaceString.keys.forEach((key) => {
+                this.config.getSettings()[key] = value;
+              });
               await this.config.saveSettings();
               this.render(containerEl);
             })
@@ -94,10 +89,6 @@ export default class ConfigUI extends PluginSettingTab {
     }
     if (config.separatorPlaceholder == "") {
       warningText += "Placeholder definition cannot be empty. ";
-    }
-    if (config.separatorPlaceholder == config.separatorDefinition) {
-      warningText +=
-        "Placeholder definition cannot be the same as the definition separator. ";
     }
     this.warning.textContent = warningText;
     this.warning.hidden = warningText.length == 0;

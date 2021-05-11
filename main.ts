@@ -15,7 +15,7 @@ export default class VariablePlugin extends Plugin {
       cm.on(
         "change",
         (cmEditor: CodeMirror.Editor, changeObj: CodeMirror.EditorChange) => {
-          //console.time("detection");
+          console.time("detection");
 
           if (changeObj.origin) {
             if (!this.editorUtils.get(cm)) {
@@ -27,7 +27,7 @@ export default class VariablePlugin extends Plugin {
             this.activeEditor.detectKeywords(cmEditor, changeObj);
             cm.endOperation();
           }
-          //console.timeEnd("detection");
+          console.timeEnd("detection");
         }
       );
     });

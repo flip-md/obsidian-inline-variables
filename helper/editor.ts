@@ -93,6 +93,18 @@ export class EditorUtils {
 
       uniqueDefinitionsBefore.forEach((definition) => {
         if (!uniqueDefinitionsAfter.has(definition)) {
+          // Definition was deleted
+          if (
+            !cmEditor
+              .getValue()
+              .split("\n")
+              .find((element) => {
+                return !!new Definition(definition).find(element);
+              })
+          ) {
+            this.keyValue.delete(definition);
+          }
+          /*
           definitionChange.push(
             new Replacer(
               new Placeholder(definition),
@@ -101,12 +113,13 @@ export class EditorUtils {
             )
           );
           this.keyValue.delete(definition);
+                 */
         }
       });
 
       charIndex = 0;
     });
-    this.updatePlaceholder(cmEditor, definitionChange);
+    //this.updatePlaceholder(cmEditor, definitionChange);
   };
 
   updatePlaceholder = (
