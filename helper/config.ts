@@ -8,7 +8,7 @@ const DEFAULT_SETTINGS: PluginSettings = {
   startString: "{",
   endString: "}",
   valueEncapsulationString: '"',
-  separatorDefinition: "::",
+  separatorDefinition: ":",
   separatorPlaceholder: ":",
 };
 
